@@ -7,6 +7,8 @@
 
 use ST\Application;
 
+// New Comment
+
 define('AREA', 'U');
 require dirname(__FILE__) . '/init.php';
 
