@@ -124,13 +124,14 @@ class Application {
 
         // Подключение шаблона
         $view = new Template($area_name);
+        // $view = Template::create();
 
         if ($view->template_exists('views/' . $controller . '/' . $controller . '.tpl')) {
-            $view->assign('content', 'views/' . $controller . '/' . $controller . '.tpl');
+            $view->set_to_include('views/' . $controller . '/' . $controller . '.tpl');
 
             $status = CONTROLLER_STATUS_OK;
-        } else {
-            $status = CONTROLLER_STATUS_NO_PAGE;
+        // } else {
+            // $status = CONTROLLER_STATUS_NO_PAGE;
         }
 
         // Подключение языка
@@ -140,33 +141,38 @@ class Application {
         if (!empty($lang_variables))
             $view->assign('lang_var', $lang_variables);
 
+        // Подключение конфига
+        $view->assign('config', VariablesRegistry::get('config'));
+
+        // Подключение шаблона
+        VariablesRegistry::set('view', $view);
+
         foreach ($controllers_factory as $factory) {
-            $res = self::_run_controller($factory);
+            $res = self::_run_controller($factory, $controller, $mode, $action, $extra);
 
             if ($run_controllers == true) {
                 $status = !empty($res[0]) ? $res[0] : CONTROLLER_STATUS_OK;
+                $redirect_url = !empty($res[1]) ? $res[1] : "";
             }
         }
+
 
         if (in_array($status, array(CONTROLLER_STATUS_OK, CONTROLLER_STATUS_REDIRECT)) && !empty($_REQUEST['redirect_url'])) {
             $redirect_url = $_REQUEST['redirect_url'];
         }
 
-
         if ($status == CONTROLLER_STATUS_REDIRECT && empty($redirect_url)) {
             $status = CONTROLLER_STATUS_NO_PAGE;
         }
 
-        if (!$view->get('content') && $status == CONTROLLER_STATUS_OK) {
+        if (!$view->include_template && $status == CONTROLLER_STATUS_OK) {
             $status = CONTROLLER_STATUS_NO_PAGE;
         }
 
         if ($status == CONTROLLER_STATUS_NO_PAGE) {
-            $view->assign('page_title', 'page not found');
+            VariablesRegistry::get('view')->assign('page_title', 'page not found');
         }
 
-
-        VariablesRegistry::set('view', $view);
         VariablesRegistry::get('view')->display(VariablesRegistry::get('runtime.root_template'));
 
         exit;
@@ -205,7 +211,7 @@ class Application {
         return $controllers;
     }
 
-    private function _run_controller($path)
+    private function _run_controller($path, $controller, $mode, $action, $extra)
     {
         if (is_readable($path))
             return include($path);

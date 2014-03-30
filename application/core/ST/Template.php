@@ -12,8 +12,9 @@ class Template
 	private $_path;
 	private $_area_name;
 	private $_template;
-	private $_include_templates = array();
 	private $_var = array();
+
+	public $include_template;
 
 	private function __clone() { }
 
@@ -28,7 +29,7 @@ class Template
 		$this->_var[$name] = $value;
 	}
 
-	public function get($name)
+	public function __get($name)
 	{
 		if (isset($this->_var[$name]))
 			return $this->_var[$name];
@@ -37,7 +38,9 @@ class Template
 
 	public function template_exists($path)
 	{
-		if (is_readable($this->_path . $path)) {
+		if (file_exists($this->_path . $path) && is_readable($this->_path . $path)) {
+			$this->set_to_include($path);
+
 			return true;
 		}
 
@@ -46,10 +49,6 @@ class Template
 
 	public function display($template, $strip = true)
 	{
-		self::_include_tpl($this->_include_templates);
-
-		var_dump($this->_include_templates);
-
 		$this->_template = $this->_path . $template;
 
 		ob_start();
@@ -58,23 +57,21 @@ class Template
 		echo ($strip) ? $this->_strip(ob_get_clean()) : ob_get_clean();
 	}
 
-	public function set_to_include($template = ".tpl")
+	public function set_to_include($template = "")
 	{
-		if (is_readable($this->_path . $template))
-			$this->_include_templates[] = $this->_path . $template;
+		if (file_exists($this->_path . $template) && is_readable($this->_path . $template)) {
+			$this->include_template = $this->_path . $template;
+		}
+
+		return;
 	}
 
-	private function _include_tpl($templates = array())
+	private function include_tpl()
 	{
-		$templates = array_merge($templates, $this->_include_templates);
-
-		if (empty($templates)) {
+		if (empty($this->include_template))
 			return;
-		}
 
-		foreach($templates as $tmpl) {
-			require_once($tmpl);
-		}
+		require_once($this->include_template);
 	}
 
 	private function _strip($data)

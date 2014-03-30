@@ -1,9 +1,9 @@
 <html>
 <head>
-	<?php $this->set_to_include('meta.tpl'); ?>
-	<title><?php echo $this->get('page_title'); ?></title>
+	<title><?php echo $this->page_title; ?></title>
+	<?php require_once('meta.tpl'); ?>
 </head>
 <body class="st-container">
-	<?php $this->set_to_include(); ?>
+	<?php $this->include_tpl(); ?>
 </body>
 </html>
