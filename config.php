@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * (c) Arefiev Artem, Sidorov Alexander
  * License for snote project
  */
@@ -9,8 +9,8 @@
 define('DIR_ROOT', dirname(__FILE__));
 
 // Controller return statuses
-define('CONTROLLER_STATUS_REDIRECT', 302);
 define('CONTROLLER_STATUS_OK', 200);
+define('CONTROLLER_STATUS_REDIRECT', 302);
 define('CONTROLLER_STATUS_NO_PAGE', 404);
 define('CONTROLLER_STATUS_DENIED', 403);
 
@@ -21,10 +21,8 @@ define('SESSIONS_COOKIE_ALIVE_TIME', 600);
 $config = array();
 
 $config['dir'] = array(
-    'controllers' => DIR_ROOT . '/application/controllers/', 
-    'functions' => DIR_ROOT . '/application/core/functions/', 
-    'design_backend' => DIR_ROOT . '/design/backend/', 
-    'design_frontend' => DIR_ROOT . '/design/frontend/'
+    'controllers' => DIR_ROOT . '/application/controllers/',
+    'functions' => DIR_ROOT . '/application/core/functions/',
 );
 
 // Database

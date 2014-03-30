@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * (c) Arefiev Artem, Sidorov Andrew
  * License for snote project
  */

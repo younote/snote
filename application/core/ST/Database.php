@@ -1,6 +1,6 @@
 <?php
 
-/* 
+/*
  * (c) Arefiev Artem, Sidorov Andrew
  * License for snote project
  */
@@ -13,9 +13,9 @@ class Database
      * Используется для передачи методам класса индентификатора коннекта к БД
      */
     private static $_db;
-    
+
     private function __construct() { }
-    
+
     /*
      * Подключение к базе данных
      * @param string $db_host     host name
@@ -25,15 +25,15 @@ class Database
      * return resource идентификатор коннетка к БД, false если возникает ошибка
      */
     public static function connect( $config )
-    {      
+    {
         $db_host = $config['system']['db_host'];
         $db_user = $config['system']['db_user'];
         $db_password = $config['system']['db_password'];
         $db_name = $config['system']['db_name'];
-        
+
         if ( $link = mysqli_connect( $db_host, $db_user, $db_password, $db_name ) ) {
             self::$_db = $link;
-            
+
             return true;
         }
         return false;
@@ -60,7 +60,33 @@ class Database
             mysqli_free_result($_result);
         }
 
-        return $result;
+        return !empty($result) ? $result : array();
+    }
+
+    /**
+     * Execute query and format result as associative array with column names as keys and index as defined field
+     *
+     * @param string $query unparsed query
+     * @param string $field field for array index
+     * @param mixed ... unlimited number of variables for placeholders
+     * @return array structured data
+     */
+    public static function get_hash_array($query, $field)
+    {
+        $args = array_slice(func_get_args(), 2);
+        array_unshift($args, $query);
+
+        if ( $_result = mysqli_query(self::$_db, self::query($query, array_slice($args, 0))) ) {
+            while ($arr = mysqli_fetch_assoc($_result)) {
+                if (isset($arr[$field])) {
+                    $result[$arr[$field]] = $arr;
+                }
+            }
+
+            mysqli_free_result($_result);
+        }
+
+        return !empty($result) ? $result : array();
     }
 
     /*
@@ -79,7 +105,7 @@ class Database
             mysqli_free_result($_result);
         }
 
-        return $result;
+        return !empty($result) ? $result : array();
     }
 
     /*
@@ -95,7 +121,7 @@ class Database
             mysqli_free_result($_result);
         }
 
-        return ( isset($result) && is_array($result) ) ? $result[0] : NULL;
+        return ( isset($result) && is_array($result) ) ? $result[0] : "";
     }
 
     /*
@@ -109,25 +135,25 @@ class Database
             mysqli_free_result($_result);
         }
 
-        return isset($result) ? $result : NULL;
+        return isset($result) ? $result : "";
     }
 
     /*
      * Получает количество найденных полей
      */
     public static function get_fields_count( $query )
-    { 
+    {
         if ( $_result = mysqli_query(self::$_db, $query) ) {
             $result = $_result->field_count;
 
             mysqli_free_result($_result);
         }
 
-        return isset($result) ? $result : NULL;
+        return isset($result) ? $result : "";
     }
 
-    private static function query( $query, $args )
-    { 
+    public static function query( $query, $args )
+    {
         $query = self::process($query, $args);
         return $query;
     }
@@ -143,7 +169,7 @@ class Database
                 } elseif ( $ph == '?f' ) { // float
                     $pattern = substr_replace($pattern, sprintf('@01.2f', $data[$key]), strpos($pattern, $ph), $length);
                 } elseif ( $ph == '?s' ) { // string
-                    $pattern = substr_replace($pattern, "'" . $data[$key] . "'", strpos($pattern, $ph), $length);
+                    $pattern = substr_replace($pattern, "'" . $data . "'", strpos($pattern, $ph), $length);
                 } elseif ( $ph == '?n' ) { // integer array
                     // FIXME
                     foreach ($data as $key => $v) {
@@ -174,7 +200,7 @@ class Database
      * (!) Работает с int, string
      */
     private static function implode_trim( $glue = ', ', $array = array(), $use_quotes = false )
-    {  
+    {
         if ( $use_quotes ) {
             $quotes = "'";
         } else {
@@ -193,13 +219,13 @@ class Database
   //    $link = self::$_db;
   //    $result = array();
   //    $_result = mysqli_query($link, $query);
-  //    
+  //
   //    while ($_res = mysqli_fetch_assoc($_result)) {
   //      $result[] = $_res;
   //    }
-  //    
+  //
   //    print_r($result);
-  //    
+  //
   ////    mysqli_free_result($result);
   //  }
   }
