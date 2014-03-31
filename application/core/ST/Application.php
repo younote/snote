@@ -156,7 +156,6 @@ class Application {
             }
         }
 
-
         if (in_array($status, array(CONTROLLER_STATUS_OK, CONTROLLER_STATUS_REDIRECT)) && !empty($_REQUEST['redirect_url'])) {
             $redirect_url = $_REQUEST['redirect_url'];
         }
