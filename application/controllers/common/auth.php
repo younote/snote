@@ -14,7 +14,7 @@ if ($mode == "login") {
 	// Подключение view
 	$view = VariablesRegistry::get('view');
 
-	$view->assign('page_title', $view->lang_var['login']['value']);
+	$view->assign('page_title', $view->lang_var['login']);
 	$view->set_to_include('views/auth/login.tpl');
 
 	return array(CONTROLLER_STATUS_OK);

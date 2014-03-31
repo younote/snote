@@ -1,1 +1,1 @@
-<?php echo $this->lang_var['welcome']['value']; ?>
+<?php echo $this->lang_var['welcome']; ?>

@@ -89,6 +89,32 @@ class Database
         return !empty($result) ? $result : array();
     }
 
+    /**
+     * Execute query and format result as key => value array
+     *
+     * @param string $query  unparsed query
+     * @param array  $params array with 2 elements (key, value)
+     * @param mixed ... unlimited number of variables for placeholders
+     * @return array structured data
+     */
+    public static function get_single_hash_array($query, $params)
+    {
+        @list($key, $value) = $params;
+
+        $args = array_slice(func_get_args(), 2);
+        array_unshift($args, $query);
+
+        if ($_result = mysqli_query(self::$_db, self::query($query, array_slice($args, 0)))) {
+            while ($arr = mysqli_fetch_assoc($_result)) {
+                $result[$arr[$key]] = $arr[$value];
+            }
+
+            mysqli_free_result($_result);
+        }
+
+        return !empty($result) ? $result : array();
+    }
+
     /*
      * Получает данные из БД в виде одномерного массива. В качестве ключей 0..N.
      */

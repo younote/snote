@@ -74,7 +74,7 @@ class Languages
 
 		$condition = Database::query("WHERE 1 AND lang_code = ?s", $lang_code);
 
-		$lang_variables_data = Database::get_hash_array("SELECT name, value FROM snote_language_variables $condition", 'name');
+		$lang_variables_data = Database::get_single_hash_array("SELECT name, value FROM snote_language_variables $condition", array('name', 'value'));
 
 		return $lang_variables_data;
 	}
