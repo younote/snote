@@ -148,7 +148,7 @@ class Application {
         VariablesRegistry::set('view', $view);
 
         foreach ($controllers_factory as $factory) {
-            $res = self::_run_controller($factory, $controller, $mode, $action, $extra);
+            $res = self::instance()->_run_controller($factory, $controller, $mode, $action, $extra);
 
             if ($run_controllers == true) {
                 $status = !empty($res[0]) ? $res[0] : CONTROLLER_STATUS_OK;
@@ -222,6 +222,7 @@ class Application {
         if (!isset(self::$_instance)) {
             self::$_instance = new self();
         }
+
         return self::$_instance;
     }
 

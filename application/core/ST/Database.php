@@ -180,8 +180,23 @@ class Database
 
     public static function query( $query, $args )
     {
-        $query = self::process($query, $args);
+        $args = func_get_args();
+        $query = self::process($query, array_slice($args, 1));
+        $result = false;
+
+        if (!empty($query)) {
+            $result = self::$_db->query($query);
+        }
+
         return $query;
+    }
+
+    public static function quote()
+    {
+        $args = func_get_args();
+        $pattern = array_shift($args);
+
+        return self::process($pattern, $args);
     }
 
     private static function process( $pattern, $data = array() )
@@ -195,7 +210,7 @@ class Database
                 } elseif ( $ph == '?f' ) { // float
                     $pattern = substr_replace($pattern, sprintf('@01.2f', $data[$key]), strpos($pattern, $ph), $length);
                 } elseif ( $ph == '?s' ) { // string
-                    $pattern = substr_replace($pattern, "'" . $data . "'", strpos($pattern, $ph), $length);
+                    $pattern = substr_replace($pattern, "'" . $data[$key] . "'", strpos($pattern, $ph), $length);
                 } elseif ( $ph == '?n' ) { // integer array
                     // FIXME
                     foreach ($data as $key => $v) {

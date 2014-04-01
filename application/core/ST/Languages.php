@@ -26,23 +26,23 @@ class Languages
 		$condition = "WHERE 1";
 
         if (!empty($params['lang_code'])) {
-            $condition .= Database::query(' AND lang_code = ?s', $params['lang_code']);
+            $condition .= Database::qoute(' AND lang_code = ?s', $params['lang_code']);
         }
 
         if (!empty($params['lang_id'])) {
-            $condition .= Database::query(' AND lang_id = ?s', $params['lang_id']);
+            $condition .= Database::qoute(' AND lang_id = ?s', $params['lang_id']);
         }
 
         if (!empty($params['name'])) {
-            $condition .= Database::query(' AND name = ?s', $params['name']);
+            $condition .= Database::qoute(' AND name = ?s', $params['name']);
         }
 
         if (!empty($params['status'])) {
-            $condition .= Database::query(' AND status = ?s', $params['status']);
+            $condition .= Database::qoute(' AND status = ?s', $params['status']);
         }
 
         if (!empty($params['country_code'])) {
-            $condition .= Database::query(' AND country_code = ?s', $params['country_code']);
+            $condition .= Database::qoute(' AND country_code = ?s', $params['country_code']);
         }
 
         $lang_data = Database::get_array("SELECT * FROM snote_languages ?a", $condition);
@@ -72,7 +72,7 @@ class Languages
 			$lang_code = $this->_language;
 		}
 
-		$condition = Database::query("WHERE 1 AND lang_code = ?s", $lang_code);
+		$condition = Database::quote("WHERE 1 AND lang_code = ?s", $lang_code);
 
 		$lang_variables_data = Database::get_single_hash_array("SELECT name, value FROM snote_language_variables $condition", array('name', 'value'));
 

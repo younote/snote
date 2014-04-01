@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS `snote_language_variables`;
-CREATE TABLE `cscart_language_values` (
+CREATE TABLE `snote_language_variables` (
   `lang_code` char(2) NOT NULL DEFAULT '',
   `name` varchar(128) NOT NULL DEFAULT '',
   `value` text NOT NULL,
